@@ -1,0 +1,29 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Transporte privado de pasajeros',
+  description = 'Traslados a aeropuertos, eventos, comidas y conciertos. Seguro, puntual y cómodo.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/favicon.svg" />
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased">
+  <slot />
+</body>
+</html>

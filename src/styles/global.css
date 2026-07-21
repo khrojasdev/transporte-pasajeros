@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+:root {
+  --color-marca: #0B1D33;   /* azul noche */
+  --color-acento: #F5A524;  /* ámbar */
+}
+
+html {
+  scroll-behavior: smooth;
+}
