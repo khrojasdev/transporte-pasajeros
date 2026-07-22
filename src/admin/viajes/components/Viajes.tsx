@@ -100,8 +100,7 @@ export default function Viajes() {
               </td>
               <td className="px-4 py-3 text-right">
                 <div className="flex justify-end gap-2">
-                  <Link to={`/viajes/${v.id}`} className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Bitácora</Link>
-                  <Boton variante="peligro" onClick={async () => { await eliminarViaje(v.id); cargar(); }}>Eliminar</Boton>
+                  <Link to={`/viaje?id=${v.id}`} className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Bitácora</Link>                  <Boton variante="peligro" onClick={async () => { await eliminarViaje(v.id); cargar(); }}>Eliminar</Boton>
                 </div>
               </td>
             </tr>

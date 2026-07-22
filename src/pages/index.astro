@@ -1,11 +1,27 @@
 ---
 import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Servicios from '../components/Servicios.astro';
+import ComoFunciona from '../components/ComoFunciona.astro';
+import Contacto from '../components/Contacto.astro';
+import Footer from '../components/Footer.astro';
+import FormularioCotizacion from '../components/FormularioCotizacion';
+import { NEGOCIO } from '../config/negocio';
 ---
-<Base>
-  <main class="min-h-screen grid place-items-center">
-    <div class="text-center space-y-3">
-      <h1 class="text-3xl font-bold">Landing en construcción 🚐</h1>
-      <a href="/admin" class="inline-block text-amber-400 underline">Ir al panel admin</a>
-    </div>
-  </main>
+<Base
+  title={`${NEGOCIO.nombre} — Traslados privados a aeropuerto y eventos`}
+  description={`Transporte privado de pasajeros en ${NEGOCIO.zona}. Traslados a aeropuerto, eventos, comidas y conciertos con precio cerrado.`}
+>
+  <Hero />
+  <Servicios />
+  <ComoFunciona />
+
+  <section id="cotizar" class="mx-auto max-w-3xl px-6 py-20">
+    <h2 class="text-3xl font-bold">Cotiza tu traslado</h2>
+    <p class="mt-2 mb-8 text-slate-400">Respondemos con el valor exacto, sin compromiso.</p>
+    <FormularioCotizacion client:visible whatsapp={NEGOCIO.whatsapp} />
+  </section>
+
+  <Contacto />
+  <Footer />
 </Base>

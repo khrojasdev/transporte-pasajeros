@@ -1,0 +1,21 @@
+---
+const pasos = [
+  { n: '1', t: 'Cotiza', d: 'Cuéntanos origen, destino y paradas. Te respondemos con el valor exacto.' },
+  { n: '2', t: 'Confirma', d: 'Aceptas la cotización y reservamos la fecha y hora para ti.' },
+  { n: '3', t: 'Viaja', d: 'Pasamos a buscarte puntualmente. Precio cerrado, sin cargos ocultos.' },
+];
+---
+<section class="border-y border-slate-800 bg-slate-900/30">
+  <div class="mx-auto max-w-6xl px-6 py-20">
+    <h2 class="text-3xl font-bold">Cómo funciona</h2>
+    <div class="mt-10 grid gap-8 sm:grid-cols-3">
+      {pasos.map((p) => (
+        <div>
+          <div class="grid h-12 w-12 place-items-center rounded-full bg-amber-500 text-lg font-bold text-slate-950">{p.n}</div>
+          <h3 class="mt-4 text-lg font-semibold">{p.t}</h3>
+          <p class="mt-2 text-sm text-slate-400">{p.d}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

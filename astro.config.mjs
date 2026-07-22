@@ -2,11 +2,10 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://transporte.pages.dev', // se cambia cuando tengas dominio propio
-  vite: {
-    plugins: [tailwindcss()],
-  },
-  integrations: [react()],
+  site: 'https://transporte.pages.dev',
+  vite: { plugins: [tailwindcss()] },
+  integrations: [react(), sitemap({ filter: (page) => !page.includes('/admin') })],
 });

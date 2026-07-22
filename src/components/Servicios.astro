@@ -1,0 +1,21 @@
+---
+const servicios = [
+  { titulo: 'Aeropuerto', desc: 'Traslados ida y vuelta a SCL con seguimiento del vuelo y espera incluida.', icono: '✈️' },
+  { titulo: 'Eventos y fiestas', desc: 'Te llevamos y te esperamos. Vuelves seguro, sin manejar.', icono: '🎉' },
+  { titulo: 'Comidas y almuerzos', desc: 'Traslados para grupos a restaurantes, viñas y celebraciones.', icono: '🍽️' },
+  { titulo: 'Conciertos', desc: 'Ida, espera durante el show y retorno a tu domicilio.', icono: '🎵' },
+];
+---
+<section id="servicios" class="mx-auto max-w-6xl px-6 py-20">
+  <h2 class="text-3xl font-bold">Tipos de traslado</h2>
+  <p class="mt-2 text-slate-400">Elige el que necesitas; todos incluyen precio cerrado y conductor profesional.</p>
+  <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    {servicios.map((s) => (
+      <article class="rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition hover:border-amber-500/50">
+        <div class="text-3xl">{s.icono}</div>
+        <h3 class="mt-4 font-semibold">{s.titulo}</h3>
+        <p class="mt-2 text-sm text-slate-400">{s.desc}</p>
+      </article>
+    ))}
+  </div>
+</section>
