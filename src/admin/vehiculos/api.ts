@@ -1,49 +1,48 @@
-import { esperar, guardar, leer, nuevoId } from '../shared/store';
+import { supabase } from '../../lib/supabase';
 import type { Conductor, DocumentoVehiculo, Vehiculo } from './types';
 
-const VEHICULOS_SEMILLA: Vehiculo[] = [
-  { id: 'v1', nombre: 'Hyundai H1', patente: 'ABCD12', rendimiento_l_100km: 10.5, costo_desgaste_km: 120, capacidad_pasajeros: 10, activo: true },
-];
-
 export async function listarVehiculos(): Promise<Vehiculo[]> {
-  await esperar();
-  return leer('vehiculos', VEHICULOS_SEMILLA);
+  const { data, error } = await supabase.from('vehiculos').select('*').order('nombre');
+  if (error) throw error;
+  return data as Vehiculo[];
 }
 export async function crearVehiculo(v: Omit<Vehiculo, 'id'>) {
-  const lista = await listarVehiculos();
-  return guardar('vehiculos', [...lista, { ...v, id: nuevoId() }]);
+  const { error } = await supabase.from('vehiculos').insert(v);
+  if (error) throw error;
 }
 export async function actualizarVehiculo(id: string, cambios: Partial<Vehiculo>) {
-  const lista = await listarVehiculos();
-  return guardar('vehiculos', lista.map((v) => (v.id === id ? { ...v, ...cambios } : v)));
+  const { error } = await supabase.from('vehiculos').update(cambios).eq('id', id);
+  if (error) throw error;
 }
 export async function eliminarVehiculo(id: string) {
-  const lista = await listarVehiculos();
-  return guardar('vehiculos', lista.filter((v) => v.id !== id));
+  const { error } = await supabase.from('vehiculos').delete().eq('id', id);
+  if (error) throw error;
 }
 
 export async function listarConductores(): Promise<Conductor[]> {
-  await esperar();
-  return leer<Conductor[]>('conductores', []);
+  const { data, error } = await supabase.from('conductores').select('*').order('nombre');
+  if (error) throw error;
+  return data as Conductor[];
 }
 export async function crearConductor(c: Omit<Conductor, 'id'>) {
-  const lista = await listarConductores();
-  return guardar('conductores', [...lista, { ...c, id: nuevoId() }]);
+  const { error } = await supabase.from('conductores').insert(c);
+  if (error) throw error;
 }
 export async function eliminarConductor(id: string) {
-  const lista = await listarConductores();
-  return guardar('conductores', lista.filter((c) => c.id !== id));
+  const { error } = await supabase.from('conductores').delete().eq('id', id);
+  if (error) throw error;
 }
 
 export async function listarDocumentos(): Promise<DocumentoVehiculo[]> {
-  await esperar();
-  return leer<DocumentoVehiculo[]>('documentos', []);
+  const { data, error } = await supabase.from('documentos_vehiculo').select('*').order('fecha_vencimiento');
+  if (error) throw error;
+  return data as DocumentoVehiculo[];
 }
 export async function crearDocumento(d: Omit<DocumentoVehiculo, 'id'>) {
-  const lista = await listarDocumentos();
-  return guardar('documentos', [...lista, { ...d, id: nuevoId() }]);
+  const { error } = await supabase.from('documentos_vehiculo').insert(d);
+  if (error) throw error;
 }
 export async function eliminarDocumento(id: string) {
-  const lista = await listarDocumentos();
-  return guardar('documentos', lista.filter((d) => d.id !== id));
+  const { error } = await supabase.from('documentos_vehiculo').delete().eq('id', id);
+  if (error) throw error;
 }

@@ -1,26 +1,28 @@
 import { useEffect, useState } from 'react';
-
-const CLAVE = 'transporte:sesion';
+import { supabase } from '../../lib/supabase';
 
 export function useSesion() {
   const [cargando, setCargando] = useState(true);
   const [autenticado, setAutenticado] = useState(false);
 
   useEffect(() => {
-    setAutenticado(window.localStorage.getItem(CLAVE) === '1');
-    setCargando(false);
+    supabase.auth.getSession().then(({ data }) => {
+      setAutenticado(!!data.session);
+      setCargando(false);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setAutenticado(!!session);
+    });
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   const entrar = async (email: string, password: string) => {
-    // MOCK: cualquier email/clave no vacíos sirven. Se reemplaza por Supabase Auth en la Fase 5.
-    if (!email || !password) throw new Error('Ingresa email y contraseña');
-    window.localStorage.setItem(CLAVE, '1');
-    setAutenticado(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw new Error('Email o contraseña incorrectos');
   };
 
   const salir = async () => {
-    window.localStorage.removeItem(CLAVE);
-    setAutenticado(false);
+    await supabase.auth.signOut();
   };
 
   return { cargando, autenticado, entrar, salir };

@@ -17,3 +17,6 @@ export function getStaticPaths() {
   return rutas.map((app) => ({ params: { app } }));
 }
 ---
+<Base title="Panel de administración">
+  <App client:only="react" />
+</Base>

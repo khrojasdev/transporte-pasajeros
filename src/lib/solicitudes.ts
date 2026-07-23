@@ -1,3 +1,5 @@
+import { supabase } from './supabase';
+
 export interface NuevaSolicitud {
   nombre_cliente: string;
   contacto: string;
@@ -11,14 +13,9 @@ export interface NuevaSolicitud {
 }
 
 export async function enviarSolicitud(s: NuevaSolicitud) {
-  const clave = 'transporte:solicitudes';
-  const actuales = JSON.parse(window.localStorage.getItem(clave) ?? '[]');
-  const nueva = {
+  const { error } = await supabase.from('solicitudes_cotizacion').insert({
     ...s,
-    id: crypto.randomUUID(),
-    estado: 'nueva',
-    created_at: new Date().toISOString(),
-  };
-  window.localStorage.setItem(clave, JSON.stringify([nueva, ...actuales]));
-  return nueva;
+    fecha_estimada: s.fecha_estimada ? new Date(s.fecha_estimada).toISOString() : null,
+  });
+  if (error) throw error;
 }
