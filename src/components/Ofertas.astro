@@ -1,0 +1,50 @@
+---
+import { createClient } from '@supabase/supabase-js';
+import { NEGOCIO, whatsappUrl } from '../config/negocio';
+
+const url = import.meta.env.PUBLIC_SUPABASE_URL;
+const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+const supabase = createClient(url, key);
+
+const { data: publicaciones, error } = await supabase
+  .from('publicaciones')
+  .select('*')
+  .eq('activa', true)
+  .order('created_at', { ascending: false });
+
+const fmtFecha = (f: string) =>
+  new Date(f + 'T00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+{publicaciones && publicaciones.length > 0 && (
+  <section id="ofertas" class="bg-crema py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mb-10 text-center">
+        <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-naranja">No te lo pierdas</p>
+        <h2 class="text-3xl font-bold text-marino sm:text-4xl">Ofertas y eventos especiales</h2>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {publicaciones.map((p) => {
+          const msg = `Hola, me gustaría cotizar para ${p.titulo}${p.fecha_evento ? ` (${fmtFecha(p.fecha_evento)})` : ''}`;
+          return (
+            <article class="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-marino/5">
+              {p.imagen_url && (
+                <img src={p.imagen_url} alt={p.titulo} class="h-48 w-full object-cover" />
+              )}
+              <div class="flex flex-1 flex-col p-6">
+                {p.fecha_evento && (
+                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-naranja">{fmtFecha(p.fecha_evento)}</p>
+                )}
+                <h3 class="font-bold text-marino">{p.titulo}</h3>
+                <p class="mt-2 flex-1 text-sm text-marino/60">{p.descripcion}</p>
+                <a href={whatsappUrl(msg)} target="_blank" rel="noreferrer"
+                   class="mt-4 inline-block rounded-lg bg-verde px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-verde/90">
+                  Cotizar por WhatsApp
+                </a>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+)}

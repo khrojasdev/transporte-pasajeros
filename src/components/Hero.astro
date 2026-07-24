@@ -1,30 +1,40 @@
 ---
 import { NEGOCIO, whatsappUrl } from '../config/negocio';
 ---
-<section class="relative overflow-hidden border-b border-slate-800">
-  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900"></div>
-  <div class="relative mx-auto max-w-6xl px-6 py-24 sm:py-32">
-    <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-amber-400">{NEGOCIO.zona}</p>
-    <h1 class="max-w-3xl text-4xl font-bold leading-tight sm:text-6xl">
-      Traslados privados a <span class="text-amber-400">aeropuerto</span>, eventos y conciertos
-    </h1>
-    <p class="mt-6 max-w-2xl text-lg text-slate-300">
-      Vehículo cómodo, conductor con licencia profesional y precio cerrado antes de subir.
-      Cotiza en minutos y viaja tranquilo.
-    </p>
-    <div class="mt-10 flex flex-wrap gap-4">
-      <a href="#cotizar" class="rounded-lg bg-amber-500 px-6 py-3 font-semibold text-slate-950 hover:bg-amber-400">
-        Cotizar mi traslado
-      </a>
-      <a href={whatsappUrl('Hola, quiero cotizar un traslado')} target="_blank" rel="noreferrer"
-         class="rounded-lg border border-slate-600 px-6 py-3 font-semibold hover:bg-slate-800">
-        Escribir por WhatsApp
-      </a>
+<section id="inicio" class="relative overflow-hidden bg-marino text-white">
+  <div class="absolute inset-0 opacity-10"
+       style="background-image: radial-gradient(circle at 20% 30%, #F6AE2D 0, transparent 40%), radial-gradient(circle at 80% 70%, #7CB518 0, transparent 40%);">
+  </div>
+  <div class="relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-20 sm:py-28 lg:grid-cols-[1.2fr_1fr]">
+    <div>
+      <p class="mb-4 inline-block rounded-full bg-white/10 px-4 py-1 text-sm font-medium text-amarillo">
+        {NEGOCIO.zona}
+      </p>
+      <h1 class="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+        Traslados privados con la seguridad de <span class="text-amarillo">"El Profe"</span>
+      </h1>
+      <p class="mt-6 max-w-xl text-lg text-white/80">
+        Van {NEGOCIO.anioVan} para hasta {NEGOCIO.capacidadPax} pasajeros. Aeropuerto, eventos, conciertos y turismo,
+        con la responsabilidad y transparencia de un profesor jubilado. Precio cerrado antes de subir.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-4">
+        <a href="#cotizar" class="rounded-lg bg-naranja px-6 py-3 font-semibold text-white transition hover:bg-naranja/90">
+          Cotizar mi traslado
+        </a>
+        <a href={whatsappUrl('Hola Profe, quiero cotizar un traslado')} target="_blank" rel="noreferrer"
+           class="rounded-lg border border-white/30 px-6 py-3 font-semibold transition hover:bg-white/10">
+          Escribir por WhatsApp
+        </a>
+      </div>
+      <dl class="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-white/15 pt-8 text-sm">
+        <div><dt class="text-white/60">Precio</dt><dd class="mt-1 font-semibold">Cerrado, sin sorpresas</dd></div>
+        <div><dt class="text-white/60">Capacidad</dt><dd class="mt-1 font-semibold">Hasta {NEGOCIO.capacidadPax} pasajeros</dd></div>
+        <div><dt class="text-white/60">Disponibilidad</dt><dd class="mt-1 font-semibold">24/7 con reserva</dd></div>
+      </dl>
     </div>
-    <dl class="mt-14 grid max-w-2xl grid-cols-3 gap-6 border-t border-slate-800 pt-8 text-sm">
-      <div><dt class="text-slate-400">Precio</dt><dd class="mt-1 font-semibold">Cerrado, sin sorpresas</dd></div>
-      <div><dt class="text-slate-400">Disponibilidad</dt><dd class="mt-1 font-semibold">24/7 con reserva</dd></div>
-      <div><dt class="text-slate-400">Pasajeros</dt><dd class="mt-1 font-semibold">Hasta 10 personas</dd></div>
-    </dl>
+
+    <div class="flex justify-center">
+      <img src="/logo.webp" alt="ValpoTrips" class="w-64 drop-shadow-2xl sm:w-80" />
+    </div>
   </div>
 </section>

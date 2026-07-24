@@ -1,27 +1,35 @@
 ---
 import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
 import Servicios from '../components/Servicios.astro';
-import ComoFunciona from '../components/ComoFunciona.astro';
+import Nosotros from '../components/Nosotros.astro';
+import Opiniones from '../components/Opiniones.astro';
 import Contacto from '../components/Contacto.astro';
 import Footer from '../components/Footer.astro';
 import FormularioCotizacion from '../components/FormularioCotizacion';
 import { NEGOCIO } from '../config/negocio';
+import Ofertas from '../components/Ofertas.astro'; 
 ---
 <Base
-  title={`${NEGOCIO.nombre} — Traslados privados a aeropuerto y eventos`}
-  description={`Transporte privado de pasajeros en ${NEGOCIO.zona}. Traslados a aeropuerto, eventos, comidas y conciertos con precio cerrado.`}
+  title={`${NEGOCIO.nombre} — Traslados privados en Valparaíso y Viña`}
+  description={`Transporte privado de pasajeros en ${NEGOCIO.zona}. Aeropuerto, eventos, conciertos y turismo con la seguridad de El Profe. Van ${NEGOCIO.anioVan}, hasta ${NEGOCIO.capacidadPax} pasajeros.`}
 >
+  <Nav />
   <Hero />
   <Servicios />
-  <ComoFunciona />
+  <Ofertas />
+  <Nosotros />
 
   <section id="cotizar" class="mx-auto max-w-3xl px-6 py-20">
-    <h2 class="text-3xl font-bold">Cotiza tu traslado</h2>
-    <p class="mt-2 mb-8 text-slate-400">Respondemos con el valor exacto, sin compromiso.</p>
+    <div class="mb-8 text-center">
+      <h2 class="text-3xl font-bold text-marino sm:text-4xl">Cotiza tu traslado</h2>
+      <p class="mt-3 text-marino/60">Cuéntame tu ruta y te respondo con el valor exacto, sin compromiso.</p>
+    </div>
     <FormularioCotizacion client:visible whatsapp={NEGOCIO.whatsapp} />
   </section>
 
+  <Opiniones />
   <Contacto />
   <Footer />
 </Base>

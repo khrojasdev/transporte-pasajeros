@@ -5,10 +5,10 @@ import type { Viaje } from '../types';
 import { listarCotizaciones } from '../../cotizaciones/api';
 import type { Cotizacion } from '../../cotizaciones/types';
 import { clp, fecha } from '../../shared/formato';
-import { Boton, Campo, Card, Etiqueta, Input, Select, Tabla, Titulo, Vacio } from '../../shared/ui';
+import { descargarCSV } from '../../shared/csv';
+import { Boton, Campo, Card, Input, Select, Tabla, Titulo, Vacio } from '../../shared/ui';
 
 const ESTADOS: Viaje['estado'][] = ['pendiente', 'confirmado', 'realizado', 'cancelado'];
-const COLORES = { pendiente: 'ambar', confirmado: 'azul', realizado: 'verde', cancelado: 'rojo' } as const;
 
 export default function Viajes() {
   const [lista, setLista] = useState<Viaje[]>([]);
@@ -22,6 +22,17 @@ export default function Viajes() {
     setCotizaciones(await listarCotizaciones());
   };
   useEffect(() => { cargar(); }, []);
+
+  // Al elegir una cotización, precargar su fecha estimada (editable)
+  const elegirCotizacion = (id: string) => {
+    setCotSel(id);
+    const c = cotizaciones.find((x) => x.id === id);
+    if (c?.fecha_estimada) {
+      setFechaViaje(c.fecha_estimada.slice(0, 16));
+    } else {
+      setFechaViaje('');
+    }
+  };
 
   const crearDesdeCotizacion = async () => {
     const c = cotizaciones.find((x) => x.id === cotSel);
@@ -50,30 +61,64 @@ export default function Viajes() {
 
   return (
     <div>
-      <Titulo>Viajes</Titulo>
+      <Titulo
+        accion={
+          <Boton
+            variante="secundario"
+            onClick={() =>
+              descargarCSV(
+                `viajes-${new Date().toISOString().slice(0, 10)}.csv`,
+                lista.map((v) => ({
+                  fecha: new Date(v.fecha).toLocaleString('es-CL'),
+                  cliente: v.nombre_cliente,
+                  contacto: v.contacto,
+                  origen: v.origen,
+                  paradas: v.paradas.join(' | '),
+                  destino: v.destino,
+                  estado: v.estado,
+                  precio_acordado: v.precio_acordado,
+                  ingreso_real: v.ingreso_real ?? '',
+                  costo_estimado: v.costo_estimado,
+                  margen: (v.ingreso_real ?? v.precio_acordado) - v.costo_estimado,
+                }))
+              )
+            }
+          >
+            Exportar CSV
+          </Boton>
+        }
+      >
+        Viajes
+      </Titulo>
 
       <Card className="mb-6">
         <h2 className="mb-4 font-semibold">Crear viaje desde una cotización</h2>
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="min-w-[280px] flex-1">
-            <Campo label="Cotización">
-              <Select value={cotSel} onChange={(e) => setCotSel(e.target.value)}>
-                <option value="">Selecciona…</option>
-                {cotizaciones.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nombre_cliente} · {c.origen} → {c.destino} · {clp(c.precio_final)}
-                  </option>
-                ))}
-              </Select>
-            </Campo>
+        {cotizaciones.length === 0 ? (
+          <p className="text-sm text-slate-500">
+            No hay cotizaciones guardadas. Ve a la Calculadora, genera una cotización y guárdala; aquí aparecerá para crear el viaje.
+          </p>
+        ) : (
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="min-w-[280px] flex-1">
+              <Campo label="Cotización">
+                <Select value={cotSel} onChange={(e) => elegirCotizacion(e.target.value)}>
+                  <option value="">Selecciona…</option>
+                  {cotizaciones.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nombre_cliente} · {c.origen} → {c.destino} · {clp(c.precio_final)}
+                    </option>
+                  ))}
+                </Select>
+              </Campo>
+            </div>
+            <div>
+              <Campo label="Fecha y hora del viaje" hint="Se rellena de la cotización; edítala si cambió">
+                <Input type="datetime-local" value={fechaViaje} onChange={(e) => setFechaViaje(e.target.value)} />
+              </Campo>
+            </div>
+            <Boton onClick={crearDesdeCotizacion} disabled={!cotSel || !fechaViaje}>Crear viaje</Boton>
           </div>
-          <div>
-            <Campo label="Fecha y hora del viaje">
-              <Input type="datetime-local" value={fechaViaje} onChange={(e) => setFechaViaje(e.target.value)} />
-            </Campo>
-          </div>
-          <Boton onClick={crearDesdeCotizacion}>Crear viaje</Boton>
-        </div>
+        )}
       </Card>
 
       <div className="mb-4 flex gap-2">
@@ -100,7 +145,8 @@ export default function Viajes() {
               </td>
               <td className="px-4 py-3 text-right">
                 <div className="flex justify-end gap-2">
-                  <Link to={`/viaje?id=${v.id}`} className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Bitácora</Link>                  <Boton variante="peligro" onClick={async () => { await eliminarViaje(v.id); cargar(); }}>Eliminar</Boton>
+                  <Link to={`/viaje?id=${v.id}`} className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Bitácora</Link>
+                  <Boton variante="peligro" onClick={async () => { await eliminarViaje(v.id); cargar(); }}>Eliminar</Boton>
                 </div>
               </td>
             </tr>

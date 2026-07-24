@@ -1,0 +1,33 @@
+---
+import { NEGOCIO, whatsappUrl } from '../config/negocio';
+
+const enlaces = [
+  { href: '#servicios', label: 'Servicios' },
+    { href: '#ofertas', label: 'Ofertas' },
+  { href: '#nosotros', label: 'Nosotros' },
+  { href: '#opiniones', label: 'Opiniones' },
+  { href: '#contacto', label: 'Contacto' },
+];
+---
+<header class="sticky top-0 z-50 border-b border-marino/10 bg-crema/90 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
+    <a href="#inicio" class="flex items-center gap-3">
+      <img src="/logo.webp" alt="ValpoTrips" class="h-11 w-11 rounded-full object-cover" />
+      <span class="text-lg font-bold text-marino">{NEGOCIO.nombre}</span>
+    </a>
+
+    <nav class="hidden items-center gap-6 md:flex">
+      {enlaces.map((e) => (
+        <a href={e.href} class="text-sm font-medium text-marino/70 transition hover:text-naranja">{e.label}</a>
+      ))}
+      <a href="#cotizar" class="rounded-lg bg-naranja px-4 py-2 text-sm font-semibold text-white transition hover:bg-naranja/90">
+        Cotizar
+      </a>
+    </nav>
+
+    <a href={whatsappUrl('Hola Profe, quiero cotizar un traslado')} target="_blank" rel="noreferrer"
+       class="rounded-lg bg-verde px-4 py-2 text-sm font-semibold text-white md:hidden">
+      WhatsApp
+    </a>
+  </div>
+</header>

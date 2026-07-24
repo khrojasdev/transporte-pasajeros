@@ -36,6 +36,7 @@ export interface Cotizacion {
   horas_espera: number;
   distancia_km: number;
   tiempo_estimado_min: number;
+  fecha_estimada: string | null;
   peajes_detalle: { nombre: string; valor: number }[];
   peajes_total: number;
   bencina_total: number;

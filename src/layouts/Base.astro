@@ -7,8 +7,8 @@ interface Props {
 }
 
 const {
-  title = 'Transporte privado de pasajeros',
-  description = 'Traslados a aeropuertos, eventos, comidas y conciertos. Seguro, puntual y cómodo.',
+  title = 'ValpoTrips — Transporte privado de pasajeros',
+  description = 'Traslados privados a aeropuerto, eventos, conciertos y turismo en Valparaíso y Viña del Mar. La seguridad y puntualidad de El Profe, en una van 2026 para hasta 6 pasajeros.',
 } = Astro.props;
 ---
 <!doctype html>
@@ -21,9 +21,10 @@ const {
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
-  <link rel="icon" href="/favicon.svg" />
+  <meta property="og:image" content="/logo.webp" />
+  <link rel="icon" href="/logo.webp" />
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased">
+<body class="text-marino antialiased">
   <slot />
 </body>
 </html>

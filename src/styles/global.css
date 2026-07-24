@@ -1,10 +1,24 @@
 @import "tailwindcss";
 
+@theme {
+  --color-marino: #1B4965;
+  --color-marino-oscuro: #0F3247;
+  --color-naranja: #F26419;
+  --color-amarillo: #F6AE2D;
+  --color-verde: #7CB518;
+  --color-celeste: #62B6CB;
+  --color-crema: #F7F5F0;
+}
+
 :root {
-  --color-marca: #0B1D33;   /* azul noche */
-  --color-acento: #F5A524;  /* ámbar */
+  --color-marca: #1B4965;
+  --color-acento: #F26419;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-crema);
 }

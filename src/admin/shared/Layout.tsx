@@ -9,6 +9,7 @@ const enlaces = [
   { to: '/conductores', label: 'Conductores' },
   { to: '/peajes', label: 'Peajes' },
   { to: '/configuracion', label: 'Configuración' },
+  { to: '/publicaciones', label: 'Ofertas y eventos' },
 ];
 
 export default function Layout({ onSalir }: { onSalir: () => void }) {

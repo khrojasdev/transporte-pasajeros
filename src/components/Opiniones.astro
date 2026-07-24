@@ -1,0 +1,37 @@
+---
+const opiniones = [
+  {
+    nombre: 'Camila Rojas',
+    texto: 'Reservé el traslado al aeropuerto para un vuelo temprano y El Profe llegó puntual, impecable y con la van tibiecita a las 5 de la mañana. Viajé tranquila y llegué con tiempo de sobra. Cero estrés.',
+    servicio: 'Traslado aeropuerto',
+  },
+  {
+    nombre: 'Rodrigo Fuentes',
+    texto: 'Salimos con los amigos a celebrar y nadie tuvo que preocuparse de manejar. Nos fue a buscar, nos esperó y nos dejó a cada uno en su casa. Súper seguro y dividimos la tarifa entre todos.',
+    servicio: 'Conductor designado',
+  },
+  {
+    nombre: 'Familia Vergara',
+    texto: 'Contratamos a Juan para un paseo por la costa y fue como viajar con un amigo que además conoce cada rincón. Puntual, cuidadoso y con una conversa que hizo el viaje aún mejor. Ya es nuestro conductor de confianza.',
+    servicio: 'Tour por la región',
+  },
+];
+---
+<section id="opiniones" class="mx-auto max-w-6xl px-6 py-20">
+  <div class="mb-10 text-center">
+    <h2 class="text-3xl font-bold text-marino sm:text-4xl">Lo que dicen los pasajeros</h2>
+    <p class="mt-3 text-marino/60">Confianza que se construye viaje a viaje.</p>
+  </div>
+  <div class="grid gap-6 md:grid-cols-3">
+    {opiniones.map((o) => (
+      <figure class="flex flex-col rounded-2xl bg-white p-6 shadow-sm ring-1 ring-marino/5">
+        <div class="mb-3 text-amarillo">★★★★★</div>
+        <blockquote class="flex-1 text-sm text-marino/70">"{o.texto}"</blockquote>
+        <figcaption class="mt-4 border-t border-marino/10 pt-4">
+          <p class="font-semibold text-marino">{o.nombre}</p>
+          <p class="text-xs text-marino/50">{o.servicio}</p>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>

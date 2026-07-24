@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { actualizarViaje, guardarBitacora, listarViajes, obtenerBitacora } from '../api';
 import type { Bitacora, Viaje } from '../types';
 import { clp, fecha } from '../../shared/formato';
+import { generarComprobante } from '../comprobante';
 import { Boton, Campo, Card, Input, Titulo } from '../../shared/ui';
 
 export default function DetalleViaje() {
@@ -50,6 +51,15 @@ export default function DetalleViaje() {
             <Campo label="Ingreso real cobrado (CLP)">
               <Input type="number" value={ingreso} onChange={(e) => setIngreso(+e.target.value)} />
             </Campo>
+          </div>
+          <div className="mt-4">
+            <Boton
+              variante="secundario"
+              onClick={() => generarComprobante({ ...viaje, ingreso_real: ingreso }, 1)}
+              className="w-full"
+            >
+              Descargar comprobante PDF
+            </Boton>
           </div>
         </Card>
 

@@ -10,6 +10,7 @@ import type { Peaje } from '../../peajes/types';
 import type { Configuracion } from '../../configuracion/types';
 import { clp, minAHoras } from '../../shared/formato';
 import { Boton, Campo, Card, Input, Select, Titulo } from '../../shared/ui';
+import { buscarLugar, calcularRuta } from '../rutas';
 
 export default function Calculadora() {
   const [params] = useSearchParams();
@@ -34,8 +35,11 @@ export default function Calculadora() {
   const [horasEspera, setHorasEspera] = useState(0);
   const [peajesSel, setPeajesSel] = useState<string[]>([]);
   const [margen, setMargen] = useState(30);
+  const [fechaEstimada, setFechaEstimada] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState('');
+  const [calculando, setCalculando] = useState(false);
+  const [errorRuta, setErrorRuta] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -59,6 +63,8 @@ export default function Calculadora() {
       setOrigen(s.origen);
       setDestino(s.destino);
       setParadas(s.paradas ?? []);
+      // La fecha de la solicitud viene en ISO; el input datetime-local necesita 'YYYY-MM-DDTHH:mm'
+      if (s.fecha_estimada) setFechaEstimada(s.fecha_estimada.slice(0, 16));
     })();
   }, [solicitudId]);
 
@@ -89,6 +95,27 @@ export default function Calculadora() {
     setParadas(nuevo);
   };
 
+  const calcularConApi = async () => {
+    setErrorRuta('');
+    setCalculando(true);
+    try {
+      const puntos = [origen, ...paradas.filter(Boolean), destino];
+      const coords: [number, number][] = [];
+      for (const p of puntos) {
+        const res = await buscarLugar(p);
+        if (!res.length) throw new Error(`No se encontró la dirección: ${p}`);
+        coords.push(res[0].coordenadas);
+      }
+      const ruta = await calcularRuta(coords);
+      setDistanciaKm(ruta.distancia_km);
+      setTiempoMin(ruta.tiempo_min);
+    } catch (e) {
+      setErrorRuta(e instanceof Error ? e.message : 'Error al calcular la ruta');
+    } finally {
+      setCalculando(false);
+    }
+  };
+
   const guardar = async () => {
     if (!resultado || !vehiculo) return;
     if (!nombreCliente || !origen || !destino) {
@@ -109,6 +136,7 @@ export default function Calculadora() {
         horas_espera: horasEspera,
         distancia_km: resultado.distancia_km,
         tiempo_estimado_min: resultado.tiempo_estimado_min,
+        fecha_estimada: fechaEstimada ? new Date(fechaEstimada).toISOString() : null,
         peajes_detalle: peajes.filter((p) => peajesSel.includes(p.id)).map((p) => ({ nombre: p.nombre, valor: p.valor })),
         peajes_total: resultado.peajes_total,
         bencina_total: resultado.bencina_total,
@@ -159,6 +187,11 @@ export default function Calculadora() {
                 <Input value={contacto} onChange={(e) => setContacto(e.target.value)} />
               </Campo>
             </div>
+            <div className="mt-4">
+              <Campo label="Fecha y hora del viaje" hint="Se traspasa al crear el viaje; puedes ajustarla después">
+                <Input type="datetime-local" value={fechaEstimada} onChange={(e) => setFechaEstimada(e.target.value)} />
+              </Campo>
+            </div>
           </Card>
 
           <Card>
@@ -191,9 +224,13 @@ export default function Calculadora() {
 
           <Card>
             <h2 className="mb-1 font-semibold">Distancia y tiempo</h2>
-            <p className="mb-4 text-xs text-slate-500">
-              Por ahora se ingresan a mano. En la Fase 6 se llenan solos con la API de rutas.
-            </p>
+            <div className="mb-4 flex items-center gap-3">
+              <Boton variante="secundario" onClick={calcularConApi} disabled={calculando || !origen || !destino}>
+                {calculando ? 'Calculando…' : 'Calcular ruta automáticamente'}
+              </Boton>
+              <span className="text-xs text-slate-500">Puedes ajustar los valores a mano después</span>
+            </div>
+            {errorRuta && <p className="mb-4 text-sm text-red-400">{errorRuta}</p>}
             <div className="grid gap-4 sm:grid-cols-2">
               <Campo label="Distancia (km, solo ida)">
                 <Input type="number" min={0} value={distanciaKm} onChange={(e) => setDistanciaKm(+e.target.value)} />

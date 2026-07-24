@@ -42,7 +42,6 @@ export default function FormularioCotizacion({ whatsapp }: { whatsapp: string })
     }
     setEnviando(true);
     try {
-      // FASE 5: aquí se inserta en Supabase. Por ahora solo confirma.
       const { enviarSolicitud } = await import('../lib/solicitudes');
       await enviarSolicitud({
         ...f,
@@ -58,15 +57,16 @@ export default function FormularioCotizacion({ whatsapp }: { whatsapp: string })
     }
   };
 
-  const input = 'w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm outline-none focus:border-amber-500';
+  const input = 'w-full rounded-lg border border-marino/20 bg-white px-3 py-2.5 text-sm text-marino outline-none focus:border-naranja focus:ring-1 focus:ring-naranja';
+  const label = 'mb-1 block text-xs font-medium uppercase tracking-wide text-marino/60';
 
   if (enviado) {
     return (
-      <div className="rounded-xl border border-emerald-700 bg-emerald-950/30 p-8 text-center">
-        <p className="text-lg font-semibold text-emerald-400">¡Solicitud recibida!</p>
-        <p className="mt-2 text-sm text-slate-300">Te contactaremos con la cotización a la brevedad.</p>
+      <div className="rounded-2xl border border-verde/30 bg-verde/10 p-8 text-center">
+        <p className="text-lg font-semibold text-verde">¡Solicitud recibida!</p>
+        <p className="mt-2 text-sm text-marino/70">Te contactaré con la cotización a la brevedad.</p>
         <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(texto)}`} target="_blank" rel="noreferrer"
-           className="mt-6 inline-block rounded-lg bg-amber-500 px-6 py-3 font-semibold text-slate-950">
+           className="mt-6 inline-block rounded-lg bg-naranja px-6 py-3 font-semibold text-white transition hover:bg-naranja/90">
           Enviar también por WhatsApp
         </a>
       </div>
@@ -74,57 +74,57 @@ export default function FormularioCotizacion({ whatsapp }: { whatsapp: string })
   }
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 sm:p-8">
+    <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-marino/10 sm:p-8">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">Tu nombre *</span>
+          <span className={label}>Tu nombre *</span>
           <input className={input} value={f.nombre_cliente} onChange={set('nombre_cliente')} />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">Teléfono / WhatsApp *</span>
+          <span className={label}>Teléfono / WhatsApp *</span>
           <input className={input} value={f.contacto} onChange={set('contacto')} placeholder="+56 9 ..." />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">Origen *</span>
+          <span className={label}>Origen *</span>
           <input className={input} value={f.origen} onChange={set('origen')} placeholder="Viña del Mar, Av. Libertad 1200" />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">Destino *</span>
+          <span className={label}>Destino *</span>
           <input className={input} value={f.destino} onChange={set('destino')} placeholder="Aeropuerto SCL" />
         </label>
         <label className="block sm:col-span-2">
-          <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">Paradas intermedias</span>
+          <span className={label}>Paradas intermedias</span>
           <input className={input} value={f.paradas} onChange={set('paradas')} placeholder="Separadas por coma" />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">Fecha y hora</span>
+          <span className={label}>Fecha y hora</span>
           <input type="datetime-local" className={input} value={f.fecha_estimada} onChange={set('fecha_estimada')} />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">Pasajeros</span>
-          <input type="number" min={1} className={input} value={f.cantidad_pasajeros} onChange={set('cantidad_pasajeros')} />
+          <span className={label}>Pasajeros</span>
+          <input type="number" min={1} max={6} className={input} value={f.cantidad_pasajeros} onChange={set('cantidad_pasajeros')} />
         </label>
         <label className="block sm:col-span-2">
-          <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">Tipo de servicio</span>
+          <span className={label}>Tipo de servicio</span>
           <select className={input} value={f.tipo_servicio} onChange={set('tipo_servicio')}>
             {TIPOS.map((t) => <option key={t.valor} value={t.valor}>{t.label}</option>)}
           </select>
         </label>
         <label className="block sm:col-span-2">
-          <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">Mensaje</span>
+          <span className={label}>Mensaje</span>
           <textarea rows={3} className={input} value={f.mensaje} onChange={set('mensaje')} />
         </label>
       </div>
 
-      {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
 
       <div className="mt-6 flex flex-wrap gap-3">
         <button onClick={enviar} disabled={enviando}
-                className="rounded-lg bg-amber-500 px-6 py-3 font-semibold text-slate-950 hover:bg-amber-400 disabled:opacity-50">
+                className="rounded-lg bg-naranja px-6 py-3 font-semibold text-white transition hover:bg-naranja/90 disabled:opacity-50">
           {enviando ? 'Enviando…' : 'Solicitar cotización'}
         </button>
         <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(texto)}`} target="_blank" rel="noreferrer"
-           className="rounded-lg border border-slate-600 px-6 py-3 font-semibold hover:bg-slate-800">
+           className="rounded-lg border border-marino/30 px-6 py-3 font-semibold text-marino transition hover:bg-marino/5">
           Enviar por WhatsApp
         </a>
       </div>

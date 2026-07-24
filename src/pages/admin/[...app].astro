@@ -13,10 +13,13 @@ export function getStaticPaths() {
     'conductores',
     'peajes',
     'configuracion',
+    'publicaciones',
   ];
   return rutas.map((app) => ({ params: { app } }));
 }
 ---
 <Base title="Panel de administración">
-  <App client:only="react" />
+  <div class="min-h-screen bg-slate-950 text-slate-100">
+    <App client:only="react" />
+  </div>
 </Base>

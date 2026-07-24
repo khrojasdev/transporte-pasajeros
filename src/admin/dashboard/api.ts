@@ -50,11 +50,24 @@ export async function obtenerResumen() {
     .map((d) => ({ ...d, vehiculo: vehiculos.find((v) => v.id === d.vehiculo_id)?.nombre ?? '—' }))
     .sort((a, b) => a.dias - b.dias);
 
+  const recurrentes = Object.entries(
+    viajes.reduce<Record<string, { viajes: number; total: number; contacto: string }>>((acc, v) => {
+      const k = v.nombre_cliente;
+      acc[k] = acc[k] ?? { viajes: 0, total: 0, contacto: v.contacto };
+      acc[k].viajes += 1;
+      acc[k].total += v.ingreso_real ?? v.precio_acordado;
+      return acc;
+    }, {})
+  )
+    .map(([nombre, d]) => ({ nombre, ...d }))
+    .sort((a, b) => b.viajes - a.viajes)
+    .slice(0, 5);
+
   return {
     ingresos, costos, margen: ingresos - costos,
     viajesRealizados: realizados.length,
     cotizacionesEnviadas: cotizaciones.length,
-    conversion, meses, porTipo, proximos, alertasDocs,
+    conversion, meses, porTipo, proximos, alertasDocs, recurrentes,
     viajes: realizados,
   };
 }

@@ -84,6 +84,20 @@ export default function Dashboard() {
           </div>
         </Card>
       </div>
+
+      {r.recurrentes.length > 0 && (
+        <Card className="mt-6">
+          <h2 className="mb-4 font-semibold">Clientes más frecuentes</h2>
+          <ul className="divide-y divide-slate-800 text-sm">
+            {r.recurrentes.map((c) => (
+              <li key={c.nombre} className="flex justify-between py-2">
+                <span>{c.nombre} <span className="text-slate-500">· {c.contacto}</span></span>
+                <span className="text-slate-400">{c.viajes} viajes · {clp(c.total)}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
     </div>
   );
 }
