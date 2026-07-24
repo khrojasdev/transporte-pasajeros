@@ -5,7 +5,7 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://transporte.pages.dev',
+  site: 'https://valpotrips.pages.dev',
   vite: { plugins: [tailwindcss()] },
   integrations: [react(), sitemap({ filter: (page) => !page.includes('/admin') })],
 });
