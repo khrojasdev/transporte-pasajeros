@@ -5,13 +5,12 @@ export const NEGOCIO = {
   conductor: 'Juan Henríquez',
   apodo: 'El Profe',
   telefono: '+56 9 9348 2243',
-  whatsapp: '56993482243', // solo dígitos, con código país
-  email: 'valpotrips1@gmail.com', // cámbialo si tienes otro
+  whatsapp: '56993482243',
+  email: 'contacto@valpotrips.cl',
   instagram: 'https://www.instagram.com/valpo.trips/',
   instagramHandle: '@valpo.trips',
   zona: 'Valparaíso, Viña del Mar y toda la Región',
   capacidadPax: 6,
-  anioVan: 2026,
 };
 
 export const whatsappUrl = (texto: string) =>
