@@ -1,50 +1,90 @@
 ---
 import { createClient } from '@supabase/supabase-js';
-import { NEGOCIO, whatsappUrl } from '../config/negocio';
+import OfertaCard from './OfertaCard.astro';
+import type { Publicacion } from '../admin/publicaciones/types';
 
 const url = import.meta.env.PUBLIC_SUPABASE_URL;
 const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(url, key);
 
-const { data: publicaciones, error } = await supabase
-  .from('publicaciones')
-  .select('*')
-  .eq('activa', true)
-  .order('created_at', { ascending: false });
+const { data } = await supabase.from('publicaciones').select('*').eq('activa', true);
+const publicaciones = (data ?? []) as Publicacion[];
 
-const fmtFecha = (f: string) =>
-  new Date(f + 'T00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+const capitalizar = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const claveMes = (f: string) => {
+  const d = new Date(f + 'T00:00');
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+};
+
+const hoy = new Date();
+const claveMesActual = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`;
+
+const sinFecha = publicaciones.filter((p) => !p.fecha_evento);
+
+interface GrupoMes {
+  clave: string;
+  etiqueta: string;
+  items: Publicacion[];
+}
+
+const gruposPorClave = new Map<string, GrupoMes>();
+for (const p of publicaciones) {
+  if (!p.fecha_evento) continue;
+  const clave = claveMes(p.fecha_evento);
+  if (clave < claveMesActual) continue; // meses ya pasados no se muestran
+  if (!gruposPorClave.has(clave)) {
+    const d = new Date(p.fecha_evento + 'T00:00');
+    gruposPorClave.set(clave, {
+      clave,
+      etiqueta: capitalizar(d.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' })),
+      items: [],
+    });
+  }
+  gruposPorClave.get(clave)!.items.push(p);
+}
+
+const gruposMes = [...gruposPorClave.values()]
+  .sort((a, b) => a.clave.localeCompare(b.clave))
+  .map((g) => ({
+    ...g,
+    items: g.items.sort((a, b) => (a.fecha_evento! < b.fecha_evento! ? -1 : a.fecha_evento! > b.fecha_evento! ? 1 : 0)),
+  }));
+
+const hayContenido = gruposMes.length > 0 || sinFecha.length > 0;
 ---
-{publicaciones && publicaciones.length > 0 && (
+{hayContenido && (
   <section id="ofertas" class="bg-crema py-20">
     <div class="mx-auto max-w-6xl px-6">
       <div class="mb-10 text-center">
         <p class="mb-2 text-sm font-semibold uppercase tracking-wide text-naranja">No te lo pierdas</p>
         <h2 class="text-3xl font-bold text-marino sm:text-4xl">Ofertas y eventos especiales</h2>
       </div>
-      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {publicaciones.map((p) => {
-          const msg = `Hola, me gustaría cotizar para ${p.titulo}${p.fecha_evento ? ` (${fmtFecha(p.fecha_evento)})` : ''}`;
-          return (
-            <article class="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-marino/5">
-              {p.imagen_url && (
-                <img src={p.imagen_url} alt={p.titulo} class="h-48 w-full object-cover" />
-              )}
-              <div class="flex flex-1 flex-col p-6">
-                {p.fecha_evento && (
-                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-naranja">{fmtFecha(p.fecha_evento)}</p>
-                )}
-                <h3 class="font-bold text-marino">{p.titulo}</h3>
-                <p class="mt-2 flex-1 text-sm text-marino/60">{p.descripcion}</p>
-                <a href={whatsappUrl(msg)} target="_blank" rel="noreferrer"
-                   class="mt-4 inline-block rounded-lg bg-verde px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-verde/90">
-                  Cotizar por WhatsApp
-                </a>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+
+      {gruposMes.map((grupo) => (
+        <div class="mb-12 last:mb-0" data-mes={grupo.clave}>
+          <h3 class="mb-5 text-xl font-bold text-marino">{grupo.etiqueta}</h3>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {grupo.items.map((p) => <OfertaCard p={p} />)}
+          </div>
+        </div>
+      ))}
+
+      {sinFecha.length > 0 && (
+        <div class="mb-12 last:mb-0">
+          {gruposMes.length > 0 && <h3 class="mb-5 text-xl font-bold text-marino">Otras ofertas</h3>}
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {sinFecha.map((p) => <OfertaCard p={p} />)}
+          </div>
+        </div>
+      )}
     </div>
   </section>
 )}
+
+<script>
+  const ahora = new Date();
+  const claveActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
+  document.querySelectorAll<HTMLElement>('[data-mes]').forEach((el) => {
+    if ((el.dataset.mes ?? '') < claveActual) el.remove();
+  });
+</script>

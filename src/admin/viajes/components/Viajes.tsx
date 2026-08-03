@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { actualizarViaje, crearViaje, eliminarViaje, listarViajes } from '../api';
+import { agruparPorMes } from '../agrupar';
 import type { Viaje } from '../types';
 import { listarCotizaciones } from '../../cotizaciones/api';
 import type { Cotizacion } from '../../cotizaciones/types';
@@ -58,6 +59,7 @@ export default function Viajes() {
   };
 
   const visibles = filtro === 'todos' ? lista : lista.filter((v) => v.estado === filtro);
+  const grupos = agruparPorMes(visibles);
 
   return (
     <div>
@@ -131,27 +133,34 @@ export default function Viajes() {
       </div>
 
       {visibles.length === 0 ? <Vacio mensaje="Sin viajes en este filtro." /> : (
-        <Tabla cabeceras={['Fecha', 'Cliente', 'Ruta', 'Precio', 'Estado', '']}>
-          {visibles.map((v) => (
-            <tr key={v.id}>
-              <td className="px-4 py-3 text-slate-300">{fecha(v.fecha)}</td>
-              <td className="px-4 py-3">{v.nombre_cliente}</td>
-              <td className="px-4 py-3 text-slate-400">{[v.origen, ...v.paradas, v.destino].join(' → ')}</td>
-              <td className="px-4 py-3">{clp(v.ingreso_real ?? v.precio_acordado)}</td>
-              <td className="px-4 py-3">
-                <Select value={v.estado} onChange={async (e) => { await actualizarViaje(v.id, { estado: e.target.value as Viaje['estado'] }); cargar(); }}>
-                  {ESTADOS.map((e) => <option key={e} value={e}>{e}</option>)}
-                </Select>
-              </td>
-              <td className="px-4 py-3 text-right">
-                <div className="flex justify-end gap-2">
-                  <Link to={`/viaje?id=${v.id}`} className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Bitácora</Link>
-                  <Boton variante="peligro" onClick={async () => { await eliminarViaje(v.id); cargar(); }}>Eliminar</Boton>
-                </div>
-              </td>
-            </tr>
+        <div className="space-y-8">
+          {grupos.map((grupo) => (
+            <div key={grupo.clave}>
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">{grupo.etiqueta}</h2>
+              <Tabla cabeceras={['Fecha', 'Cliente', 'Ruta', 'Precio', 'Estado', '']}>
+                {grupo.viajes.map((v) => (
+                  <tr key={v.id}>
+                    <td className="px-4 py-3 text-slate-300">{fecha(v.fecha)}</td>
+                    <td className="px-4 py-3">{v.nombre_cliente}</td>
+                    <td className="px-4 py-3 text-slate-400">{[v.origen, ...v.paradas, v.destino].join(' → ')}</td>
+                    <td className="px-4 py-3">{clp(v.ingreso_real ?? v.precio_acordado)}</td>
+                    <td className="px-4 py-3">
+                      <Select value={v.estado} onChange={async (e) => { await actualizarViaje(v.id, { estado: e.target.value as Viaje['estado'] }); cargar(); }}>
+                        {ESTADOS.map((e) => <option key={e} value={e}>{e}</option>)}
+                      </Select>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex justify-end gap-2">
+                        <Link to={`/viaje?id=${v.id}`} className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Bitácora</Link>
+                        <Boton variante="peligro" onClick={async () => { await eliminarViaje(v.id); cargar(); }}>Eliminar</Boton>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </Tabla>
+            </div>
           ))}
-        </Tabla>
+        </div>
       )}
     </div>
   );
